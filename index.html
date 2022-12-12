@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    />
+    <script defer src="script.js"></script>
+    <title>Cats API</title>
+</head>
+<body>
+    <header>
+        <h1>Cats API from <a href="https://cats.petiteweb.dev/doc/" target="_blank">cats.petiteweb.dev</a></h1>
+        <button id="add-cat" class="add-btn">Добавить кота</button>
+    </header>
+    <div class="container">
+        <div class="data-wr">
+        </div>
+        <div class="form-wrapper hidden">
+            <form action="https://cats.petiteweb.dev/api/single/DYAlex/add/" method="post" class="add-cat-form">
+                <div class="form-header">
+                    <h3>Добавить нового кота</h3>
+                    <span class="close" id="close-btn">&times;</span>
+                </div>
+                <label for="cat-id">Укажите ID: <input type="number" id="cat-id" name="id" required></label>
+                <label for="cat-name">Укажите имя: <input type="text" id="cat-name" name="name" required></label>
+                <label for="cat-image">Прикрепите ссылку на фото: <input type="text" id="cat-image" name="image"></label>
+                <label for="cat-age">Укажите возраст: <input type="number" id="cat-age" name="age"></label>
+                <label for="cat-rate">Укажите рейтинг: <input type="number" id="cat-rate" name="rate"></label>
+                <label for="cat-favorite">Добавить в Избранное: 
+                    <label for="cat-favorite-true"><input type="radio" value="true" id="cat-favorite-true" name="favorite"> Добавить</label>
+                    <label for="cat-favorite-false"><input type="radio" value="false" id="cat-favorite-false" name="favorite"> Не добавлять</label>
+                </label>
+                <label for="cat-description">Добавить описание: <input type="text" id="cat-description"></label>
+                <input type="submit" value="Создать кота">
+            </form>
+        </div>
+    </div>
+</body>
+</html>

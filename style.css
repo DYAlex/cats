@@ -1,0 +1,183 @@
+* {
+    margin: 0;
+    font-family: sans-serif;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem;
+    /* border-bottom: 1px solid #dcdcdc; */
+    box-shadow: 1px 0 5px #dcdcdc;
+}
+
+header a {
+    text-decoration: none;
+    cursor: pointer;
+    color: #333;
+    margin-left: 0.2rem;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.data-wr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-evenly;
+}
+
+.card {
+    width: 16rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    background-color: #fefefe;
+    overflow: hidden;
+    position: relative;
+    color: #333;
+}
+
+.card-img {
+    width: 100%;
+    height: 300px;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.card-body {
+    width: 100%;
+    padding: 0.5rem;
+    margin: 0 auto;
+    margin-bottom: 1.5rem;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+}
+
+.card-text {
+    font-size: 1rem;
+}
+
+.card-likes-wrapper {
+    position: absolute;
+    padding-bottom: 0.3rem;
+    padding-right: 0.3rem;
+    bottom: 0;
+    right: 0;
+}
+
+.card .like {
+    font-size: 1.5rem;
+    color: #404040;
+    
+}
+
+.card .liked {
+    color: crimson;
+    font-weight: 600;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.add-btn, input[type="submit"] {
+    background-color: #404040;
+    color: #fefefe;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 2px solid #404040;
+}
+
+.add-btn:hover, input[type="submit"]:hover {
+    color: #404040;
+    background-color: #fefefe;
+    border: 2px solid #404040;
+}
+
+/* Modal */
+.modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 10%;
+    top: 10%;
+    width: 80%; 
+    height: 80%; 
+    background-color: #fefefe;
+    border: 1px solid #dcdcdc;
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+}
+
+.modal>img {
+    height: 100%;
+    width: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.modal-text {
+    display: none;
+}
+
+.modal-spacing {
+    line-height: 1.5rem;
+}
+
+.modal-text_active {
+    display: block;
+}
+
+/* Form  */
+.hidden {
+    display: none;
+}
+
+.add-cat-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    max-width: 30rem;
+    position: relative;
+}
+
+input {
+    border-radius: 5px;
+    border: 1px solid #404040;
+    padding: .2rem;
+}
+
+/* The Close Button */
+.close {
+    color: #dcdcdc;
+    font-size: 2rem;
+    font-weight: bold;
+    position: absolute;
+    padding-bottom: 1rem;
+    padding-right: 1rem;
+    top: 0;
+    right: 0;
+}
+
+.close:hover,
+.close:focus {
+    color: #404040;
+    text-decoration: none;
+    cursor: pointer;
+}
