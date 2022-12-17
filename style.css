@@ -144,7 +144,7 @@ header a {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .modal__content {
@@ -157,7 +157,7 @@ header a {
     border-radius: 10px;
     position: relative;
     padding: 0;
-    overflow: hidden;
+    overflow: auto;
 }
 
 .modal__content>img {
@@ -186,14 +186,14 @@ header a {
     flex-direction: column;
     gap: 1rem;
     padding: 1.5rem;
-    border: 1px solid #dcdcdc;
+    /* border: 1px solid #dcdcdc; */
     border-radius: 10px;
     justify-content: center;
     align-items: center;
     margin: auto;
     max-width: 30rem;
     position: relative;
-    background-color: #fefefe;
+    /* background-color: #fefefe; */
 }
 
 input,
@@ -201,6 +201,10 @@ textarea {
     border-radius: 5px;
     border: 1px solid #404040;
     padding: 0.2rem;
+}
+
+textarea {
+    resize: none;
 }
 
 /* The Close Button */
