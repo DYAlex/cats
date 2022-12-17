@@ -1,47 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
         integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
-    />
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script defer src="script.js"></script>
     <title>Cats API</title>
 </head>
+
 <body>
     <header>
         <h1>Cats API from <a href="https://cats.petiteweb.dev/doc/" target="_blank">cats.petiteweb.dev</a></h1>
-        <button id="add-cat" class="add-btn">Добавить кота</button>
+        <button data-open-modal="createCat" id="add-cat" type="button" class="btn add-btn">Добавить кота</button>
     </header>
     <div class="container">
-        <div class="data-wr">
+        <div data-wr class="data-wr">
         </div>
-        <div class="form-wrapper hidden">
-            <form action="https://cats.petiteweb.dev/api/single/DYAlex/add/" method="post" class="add-cat-form">
+        <div data-modal-wr class="modal hidden">
+            <div data-modal-content class="modal__content">
+                <!-- Сюда должен подставляться контент скриптом -->
+            </div>
+        </div>
+
+        <template id="add-cat-form">
+            <!-- Create cat form -->
+            <form class="add-cat-form" name="createCatForm">
                 <div class="form-header">
                     <h3>Добавить нового кота</h3>
-                    <span class="close" id="close-btn">&times;</span>
+                    <span class="close" data-close-modal="addCat">&times;</span>
                 </div>
                 <label for="cat-id">Укажите ID: <input type="number" id="cat-id" name="id" required></label>
                 <label for="cat-name">Укажите имя: <input type="text" id="cat-name" name="name" required></label>
-                <label for="cat-image">Прикрепите ссылку на фото: <input type="text" id="cat-image" name="image"></label>
+                <label for="cat-image">Прикрепите ссылку на фото: <input type="text" id="cat-image"
+                        name="image"></label>
                 <label for="cat-age">Укажите возраст: <input type="number" id="cat-age" name="age"></label>
-                <label for="cat-rate">Укажите рейтинг: <input type="number" id="cat-rate" name="rate"></label>
-                <label for="cat-favorite">Добавить в Избранное: 
-                    <label for="cat-favorite-true"><input type="radio" value="true" id="cat-favorite-true" name="favorite"> Добавить</label>
-                    <label for="cat-favorite-false"><input type="radio" value="false" id="cat-favorite-false" name="favorite"> Не добавлять</label>
+                <label for="cat-rate">Укажите рейтинг: <input type="number" id="cat-rate" name="rate" min="1"
+                        max="10"></label>
+                <label for="cat-favorite">Добавить в Избранное:
+                    <input type="checkbox" id="cat-favorite" name="favorite">
                 </label>
-                <label for="cat-description">Добавить описание: <input type="text" id="cat-description"></label>
-                <input type="submit" value="Создать кота">
+                <label for="cat-description">Добавить описание: <textarea id="cat-description" name="description"
+                        cols="30" rows="5"></textarea></label>
+                <input type="submit" value="Создать кота" class="btn">
             </form>
-        </div>
+        </template>
+        <template id="edit-cat-form">
+            <!-- Edit cat form -->
+            <form class="edit-cat-form" name="edit-cat-form">
+                <div class="form-header">
+                    <h3>Изменить кота</h3>
+                    <span class="close" data-close-modal="editCat">&times;</span>
+                </div>
+                <label for="edit-cat-id">ID: <input type="number" id="edit-cat-id" name="id" disabled></label>
+                <label for="edit-cat-name">Имя: <input type="text" id="edit-cat-name" name="name" disabled></label>
+                <label for="edit-cat-image">Прикрепите ссылку на фото: <input type="text" id="edit-cat-image"
+                        name="image"></label>
+                <label for="edit-cat-age">Изменить возраст: <input type="number" id="edit-cat-age" name="age"></label>
+                <label for="edit-cat-rate">Изменить рейтинг: <input type="number" id="edit-cat-rate" name="rate" min="1"
+                        max="10"></label>
+                <label for="edit-cat-favorite">Добавить в Избранное:
+                    <input type="checkbox" id="edit-cat-favorite" name="favorite">
+                </label>
+                <label for="edit-cat-description">Изменить описание: <textarea id="edit-cat-description"
+                        name="description" cols="30" rows="5"></textarea></label>
+                <input type="submit" value="Изменить кота" class="btn">
+            </form>
+        </template>
     </div>
 </body>
+
 </html>
