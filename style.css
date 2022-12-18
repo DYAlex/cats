@@ -144,7 +144,7 @@ header a {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .modal__content {
@@ -157,13 +157,13 @@ header a {
     border-radius: 10px;
     position: relative;
     padding: 0;
-    overflow: hidden;
+    overflow: auto;
 }
 
 .modal__content>img {
     height: 100%;
     width: auto;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
 }
 
@@ -173,6 +173,22 @@ header a {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+.modal .card-likes-wrapper {
+    padding-bottom: 0.5rem;
+    padding-right: 1rem;
+}
+
+.modal .like {
+    font-size: 1.5rem;
+    color: #404040;
+
+}
+
+.modal .liked {
+    color: crimson;
+    font-weight: 600;
 }
 
 /* Form  */
@@ -186,14 +202,11 @@ header a {
     flex-direction: column;
     gap: 1rem;
     padding: 1.5rem;
-    border: 1px solid #dcdcdc;
     border-radius: 10px;
     justify-content: center;
     align-items: center;
     margin: auto;
     max-width: 30rem;
-    position: relative;
-    background-color: #fefefe;
 }
 
 input,
@@ -201,6 +214,10 @@ textarea {
     border-radius: 5px;
     border: 1px solid #404040;
     padding: 0.2rem;
+}
+
+textarea {
+    resize: none;
 }
 
 /* The Close Button */
