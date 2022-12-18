@@ -9,9 +9,7 @@ const baseUrl = 'https://cats.petiteweb.dev/api/single/DYAlex/';
 const ACTIONS = {
 	DELETE: 'delete',
 	EDIT: 'update',
-	SHOW: 'show',
-	ADD: 'add',
-	CLOSE: 'close'
+	LIKE: 'like',
 }
 
 const MODALS = ['createCat', 'editCat', 'showCat'];
@@ -45,7 +43,7 @@ const getCatHTML = (cat) => {
 				${cat.description}
 			</p>
 		</div>
-		<p class="card-likes-wrapper"><i class="fa-regular fa-heart ${like}"></i></p>
+		<p class="card-likes-wrapper"><i class="fa-regular fa-heart ${like}" data-cat-like-btn="" data-action="${ACTIONS.LIKE}"></i></p>
 	</div>
 	`
 }
@@ -75,8 +73,8 @@ const getModalCatHTML = (cat) => {
 			<div class="btn-wr">
 			<button data-action="${ACTIONS.EDIT}" data-open-modal="editCat" type="button" class="btn btn-primary">Изменить</button>
 			<button data-action="${ACTIONS.DELETE}" type="button" class="btn btn-danger">Удалить</button>
+			<p class="card-likes-wrapper"><i class="fa-regular fa-heart ${like}" data-cat-like-btn="" data-action="${ACTIONS.LIKE}"></i></p>
 		</div>
-		<p class="card-likes-wrapper"><i class="fa-regular fa-heart ${like}"></i></p>
 	`
 }
 
@@ -127,26 +125,30 @@ const createCat = () => {
 		const formDataObject = formatCreateFormData(
 			Object.fromEntries(new FormData(submitEvent.target).entries()),
 		);
+        if (formDataObject.id && formDataObject.name) {
 
-		fetch(`${baseUrl}add/`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(formDataObject),
-		})
-		.then((res) => {
-			if (res.status === 200) {
-				closeModalHandler(res.status);
-				// очищаем локальное хранилище при успешном добавлении кота
-				localStorage.removeItem(CREATE_FORM_LS_KEY);
-				return $wr.insertAdjacentHTML(
-					'afterbegin',
-					getCatHTML(formDataObject),
-				);
-			}
-			throw Error('Ошибка при создании кота');
-		}).catch(alert);
+			fetch(`${baseUrl}add/`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(formDataObject),
+			})
+			.then((res) => {
+				if (res.status === 200) {
+					closeModalHandler(res.status);
+					// очищаем локальное хранилище при успешном добавлении кота
+					localStorage.removeItem(CREATE_FORM_LS_KEY);
+					return $wr.insertAdjacentHTML(
+						'afterbegin',
+						getCatHTML(formDataObject),
+					);
+				}
+				throw Error('Ошибка при создании кота');
+			}).catch(alert);
+		} else {
+			alert('Ошибка при создании кота. Не заполнены обязательные поля в форме');
+		}
 	})
 }
 
@@ -202,7 +204,9 @@ const editCat = (catId) => {
 			const formDataObject = formatEditFormData(
 				Object.fromEntries(new FormData(submitEvent.target).entries()),
 			);
-	
+			if (formDataObject.name) {
+				delete formDataObject.name;
+			}
 			fetch(`${baseUrl}update/${catId}`, {
 				method: 'PUT',
 				headers: {
@@ -228,19 +232,51 @@ const editCat = (catId) => {
 		})
 }
 
+const likeCat = (e) => {
+	let $likeBtn = e.target;
+	if ($likeBtn.dataset.action === ACTIONS.LIKE) {
+		const $catWr = e.target.closest('[data-cat-id]');
+		const catId = $catWr.dataset.catId;
+
+		let favorite = {
+			"favorite": true
+		};
+
+		fetch(`${baseUrl}show/${catId}`)
+		.then((res) => res.json())
+		.then((data) => {
+			favorite.favorite = !data.favorite;
+		})
+
+		fetch(`${baseUrl}update/${catId}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(favorite),
+		})
+		.then((res) => {
+			if (res.status === 200) {
+				return $likeBtn.classList.toggle('liked');
+			}
+			throw Error('Ошибка при изменении кота');
+		}).catch(alert);
+	}
+}
+
 const openModalHandler = (e) => {
-	if (!e.target.closest('[data-open-modal]')) {
+	if (!e.target.closest('[data-open-modal]') || e.target.closest('[data-cat-like-btn]')) {
 		return;
 	}
 	const targetModalName = e.target.closest('[data-open-modal]').dataset.openModal;
 	if (MODALS.includes(targetModalName)) {
 		$modalWr.classList.remove('hidden');
 		$modalWr.addEventListener('click', closeModalHandler);
+		$modalWr.addEventListener('click', likeCat);
 	}
 	if (targetModalName !== 'createCat') {
 		const $catWr = e.target.closest('[data-cat-id]');
 		const catId = $catWr.dataset.catId;
-		// console.log(catId);
 		switch (targetModalName) {
 			case 'editCat': 
 				editCat(catId);
@@ -255,3 +291,5 @@ const openModalHandler = (e) => {
 }	
 
 document.addEventListener('click', openModalHandler);
+
+$wr.addEventListener('click', likeCat);
