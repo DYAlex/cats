@@ -3,12 +3,10 @@ const $modalWr = document.querySelector('[data-modal-wr]');
 const $modalContent = document.querySelector('[data-modal-content]');
 
 const CREATE_FORM_LS_KEY = 'CREATE_FORM_LS_KEY';
-const EDIT_FORM_LS_KEY = 'EDIT_FORM_LS_KEY';
 
 const baseUrl = 'https://cats.petiteweb.dev/api/single/DYAlex/';
 
 const ACTIONS = {
-	DETAIL: 'detail',
 	DELETE: 'delete',
 	EDIT: 'update',
 	SHOW: 'show',
@@ -24,24 +22,19 @@ const formatCreateFormData = (formDataObject) => ({
 	rate: +formDataObject.rate,
 	age: +formDataObject.age,
 	favorite: !!formDataObject.favorite,
-})
+});
 
 const formatEditFormData = (formDataObject) => ({
 	...formDataObject,
 	rate: +formDataObject.rate,
 	age: +formDataObject.age,
 	favorite: !!formDataObject.favorite,
-})
-
-const mergeData = (cat, formDataObject) => ({
-	...cat,
-	...formDataObject,
-})
+});
 
 const getCatHTML = (cat) => {
-	let like = "like"
+	let like = "like";
 	if (cat.favorite) {
-		like += " liked"
+		like += " liked";
 	}
 	return `
 	<div class="card" data-cat-id="${cat.id}" data-open-modal="showCat">
@@ -57,59 +50,10 @@ const getCatHTML = (cat) => {
 	`
 }
 
-fetch(`${baseUrl}show/`)
-	.then((res) => res.json())
-	.then((data) => {
-		$wr.insertAdjacentHTML('afterbegin', data.map(cat => getCatHTML(cat)).join('') )
-	})
-const closeModalHandler = (e) => {
-	const $closeModalBtn = document.querySelector('[data-close-modal]');
-	if (e.target === $modalWr || e.target === $closeModalBtn || e === 200) {
-		$modalWr.classList.add('hidden');
-		$modalWr.removeEventListener('click', closeModalHandler);
-		if ($closeModalBtn) {
-			$closeModalBtn.removeEventListener('click', closeModalHandler);
-		}
-		$modalContent.innerHTML = '';
-	}
-}
-const createCat = () => {
-	const $catCreateFormTemplate = document.getElementById('add-cat-form');
-	const cloneCatCreateForm = $catCreateFormTemplate.content.cloneNode(true);
-	$modalContent.appendChild(cloneCatCreateForm);
-	const $createCatForm = document.forms.createCatForm;
-	const $closeModalBtn = document.querySelector('[data-close-modal]');
-	$closeModalBtn.addEventListener('click', closeModalHandler);
-	$createCatForm.addEventListener('submit', (submitEvent) => {
-		submitEvent.preventDefault();
-		const formDataObject = formatCreateFormData(
-			Object.fromEntries(new FormData(submitEvent.target).entries()),
-		);
-
-		fetch(`${baseUrl}add/`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(formDataObject),
-		})
-		.then((res) => {
-			if (res.status === 200) {
-				closeModalHandler(res.status);
-				return $wr.insertAdjacentHTML(
-					'afterbegin',
-					getCatHTML(formDataObject),
-				);
-			}
-			throw Error('Ошибка при создании кота');
-		}).catch(alert);
-	})
-}
-
-const catCardHTML = (cat) => {
-	let like = "like"
+const getModalCatHTML = (cat) => {
+	let like = "like";
 	if (cat.favorite) {
-		like += " liked"
+		like += " liked";
 	}
 	return `
 		<img src="${cat.image}" class="card-img" alt="${cat.name}" />
@@ -135,56 +79,129 @@ const catCardHTML = (cat) => {
 		<p class="card-likes-wrapper"><i class="fa-regular fa-heart ${like}"></i></p>
 	`
 }
-const showCat = (e) => {
-	const $catWr = e.target.closest('[data-cat-id]')
-	const catId = $catWr.dataset.catId
 
-	fetch(`${baseUrl}show/${catId}`)
+const closeModalHandler = (e) => {
+	const $closeModalBtn = document.querySelector('[data-close-modal]');
+	if (e.target === $modalWr || e.target === $closeModalBtn || e === 200) {
+		$modalWr.classList.add('hidden');
+		$modalWr.removeEventListener('click', closeModalHandler);
+		if ($closeModalBtn) {
+			$closeModalBtn.removeEventListener('click', closeModalHandler);
+		}
+		$modalContent.innerHTML = '';
+	}
+}
+
+fetch(`${baseUrl}show/`)
 	.then((res) => res.json())
 	.then((data) => {
-		$modalContent.insertAdjacentHTML('afterbegin', catCardHTML(data))
+		$wr.insertAdjacentHTML('afterbegin', data.map(cat => getCatHTML(cat)).join('') );
 	})
-	.then(() => {
-		const $closeModalBtn = document.querySelector('[data-close-modal]');
-		$closeModalBtn.addEventListener('click', closeModalHandler);
+
+const createCat = () => {
+	// получаем форму из шаблона
+	const $catCreateFormTemplate = document.getElementById('add-cat-form');
+	const cloneCatCreateForm = $catCreateFormTemplate.content.cloneNode(true);
+	$modalContent.appendChild(cloneCatCreateForm);
+	// создаем форму
+	const $createCatForm = document.forms.createCatForm;
+
+	// работаем с локальных хранилищем
+	const dataFromLS = localStorage.getItem(CREATE_FORM_LS_KEY);
+    const preparedDataFromLS = dataFromLS && JSON.parse(dataFromLS);
+    if (preparedDataFromLS) {
+      Object.keys(preparedDataFromLS).forEach((key) => {
+        $createCatForm[key].value = preparedDataFromLS[key];
+      })
+    }
+
+	$createCatForm.addEventListener('change', () => {
+		const formattedData = formatCreateFormData(
+		  Object.fromEntries(new FormData($createCatForm).entries()),
+		)
+  
+		localStorage.setItem(CREATE_FORM_LS_KEY, JSON.stringify(formattedData));
+	})
+	$createCatForm.addEventListener('submit', (submitEvent) => {
+		submitEvent.preventDefault();
+		const formDataObject = formatCreateFormData(
+			Object.fromEntries(new FormData(submitEvent.target).entries()),
+		);
+
+		fetch(`${baseUrl}add/`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(formDataObject),
+		})
+		.then((res) => {
+			if (res.status === 200) {
+				closeModalHandler(res.status);
+				// очищаем локальное хранилище при успешном добавлении кота
+				localStorage.removeItem(CREATE_FORM_LS_KEY);
+				return $wr.insertAdjacentHTML(
+					'afterbegin',
+					getCatHTML(formDataObject),
+				);
+			}
+			throw Error('Ошибка при создании кота');
+		}).catch(alert);
 	})
 }
 
-
-const editCat = (e) => {
-	if (e.target.dataset.action === ACTIONS.EDIT) {
-		$modalWr.removeEventListener('click', closeModalHandler);
-		$modalContent.innerHTML = '';
-
+const deleteCat = (e) => {
+	if (e.target.dataset.action === ACTIONS.DELETE) {
 		const $catWr = e.target.closest('[data-cat-id]');
 		const catId = $catWr.dataset.catId;
 
+		fetch(`${baseUrl}delete/${catId}`, {
+			method: 'DELETE',
+		}).then((res) => {
+			if (res.status === 200) {
+				closeModalHandler(res.status);
+				document.querySelector(`[data-cat-id="${catId}"]`).remove();
+				return $modalContent.remove();
+			}
+
+			alert(`Удаление кота с id = ${catId} не удалось`);
+		})
+	}
+}
+
+const showCat = (catId) => {
+	fetch(`${baseUrl}show/${catId}`)
+	.then((res) => res.json())
+	.then((data) => {
+		$modalContent.insertAdjacentHTML('afterbegin', getModalCatHTML(data));
+	})
+
+	$modalContent.addEventListener('click', deleteCat);
+}
+
+const editCat = (catId) => {
+		// очищаем модалку
+		$modalContent.innerHTML = '';
+		// получаем форму из шаблона
 		const $catEditFormTemplate = document.getElementById('edit-cat-form');
 		const cloneCatEditForm = $catEditFormTemplate.content.cloneNode(true);
 		$modalContent.appendChild(cloneCatEditForm);
+		// создаем предзаполненную форму
 		const $editCatForm = document.forms.editCatForm;
-
-		const $closeModalBtn = document.querySelector('[data-close-modal]');
-		$closeModalBtn.addEventListener('click', closeModalHandler);
-		console.log(catId);
-		// console.log({$catWr});
-		// console.log(document.querySelector(`[data-cat-id="${catId}"]`));
-		let cat = {}
-
+		// получаем данные для предзаполнения формы
 		fetch(`${baseUrl}show/${catId}`)
 		.then((res) => res.json())
 		.then((data) => {
 			Object.keys(data).forEach((key) => {
 				$editCatForm[key].value = data[key];
-				cat[key] = data[key];
 			});
 		})
+
 		$editCatForm.addEventListener('submit', (submitEvent) => {
 			submitEvent.preventDefault();
 			const formDataObject = formatEditFormData(
 				Object.fromEntries(new FormData(submitEvent.target).entries()),
 			);
-			cat = mergeData(cat, formDataObject);
 	
 			fetch(`${baseUrl}update/${catId}`, {
 				method: 'PUT',
@@ -196,17 +213,21 @@ const editCat = (e) => {
 			.then((res) => {
 				if (res.status === 200) {
 					closeModalHandler(res.status);
-					return $wr.insertAdjacentHTML(
-						'afterbegin',
-						getCatHTML(cat),
-					);
+					document.querySelector(`[data-cat-id="${catId}"]`).remove();
+					return fetch(`${baseUrl}show/${catId}`)
+							.then((res) => res.json())
+							.then((data) => {
+								$wr.insertAdjacentHTML(
+									'afterbegin',
+									getCatHTML(data),
+								);
+							});
 				}
 				throw Error('Ошибка при изменении кота');
 			}).catch(alert);
 		})
-		document.querySelector(`[data-cat-id="${catId}"]`).remove();
-	}
 }
+
 const openModalHandler = (e) => {
 	if (!e.target.closest('[data-open-modal]')) {
 		return;
@@ -216,17 +237,21 @@ const openModalHandler = (e) => {
 		$modalWr.classList.remove('hidden');
 		$modalWr.addEventListener('click', closeModalHandler);
 	}
-	switch (targetModalName) {
-		case 'createCat':
-			createCat();
-			break;
-		case 'editCat': 
-			editCat(e);
-			break;
-		case 'showCat':
-			showCat(e);
-			break;
+	if (targetModalName !== 'createCat') {
+		const $catWr = e.target.closest('[data-cat-id]');
+		const catId = $catWr.dataset.catId;
+		// console.log(catId);
+		switch (targetModalName) {
+			case 'editCat': 
+				editCat(catId);
+				break;
+			case 'showCat':
+				showCat(catId);
+				break;
+		}
+	} else {
+		createCat();
 	}
 }	
 
-document.addEventListener('click', openModalHandler)
+document.addEventListener('click', openModalHandler);
